@@ -1,10 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Daily Sheet App</title>
+  <title>Daily Sheet</title>
 </head>
 <body>
-  <h1>Daily Sheet Entry</h1>
-  <p>This is just a placeholder. We'll add the real form next.</p>
+  <h1>Daily Sheet Form</h1>
+  <form id="dailySheetForm">
+    <label>Opening Balance: <input type="number" name="opening_balance" required></label><br>
+    <label>Closing Balance: <input type="number" name="closing_balance" required></label><br>
+    <label>POS Sales: <input type="number" name="pos_sales"></label><br>
+    <label>CC Sales: <input type="number" name="cc_sales"></label><br>
+    <label>Gallons Sold: <input type="number" name="gallons_sold"></label><br>
+    <label>Fuel Revenue: <input type="number" name="fuel_revenue"></label><br>
+    <label>Vendor Name: <input type="text" name="vendor_name"></label><br>
+    <label>Vendor Amount: <input type="number" name="vendor_amount"></label><br>
+    <label>Item Notes: <input type="text" name="item_notes"></label><br><br>
+    <button type="submit">Submit</button>
+  </form>
+
+  <script>
+    const form = document.getElementById('dailySheetForm');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault(); // Stop page reload
+
+      const formData = new FormData(form);
+      const jsonData = Object.fromEntries(formData.entries());
+
+      try {
+        const response = await fetch('http://localhost:3000/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(jsonData),
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          alert('✅ Daily Sheet submitted successfully!');
+          form.reset();
+        } else {
+          alert('❌ Failed to submit.');
+        }
+      } catch (err) {
+        console.error(err);
+        alert('⚠️ Error connecting to backend.');
+      }
+    });
+  </script>
 </body>
 </html>
